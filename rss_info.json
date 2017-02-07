@@ -1,0 +1,5 @@
+{
+  "http://www.example.com/atom.xml": "2017-01-01 00:00:00 +0900",
+  "http://www.example.org/example.rss": "2017-01-01 00:00:00 +0900",
+  "http://www.example.net/example.rdf": "2017-01-01 00:00:00 +0900"
+}
