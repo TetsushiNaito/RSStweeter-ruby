@@ -1,6 +1,5 @@
 #!/opt/rbenv/shims/ruby
 # rewrite shebang to appropriate path
-# test fot git
 
 require "time"
 require "rss"
@@ -13,9 +12,9 @@ class RSS_to_tweet
   def initialize( url, timestamp )
     @url = url
     @timestamp = timestamp
-    @timestamp_now = Time.parse( '2001-01-01 00:00:00 JST' ) # あくまで初期化
+    @timestamp_now = Time.parse( '2001-01-01 00:00:00 JST' ) # just for initialization
     
-    # RSS取得
+    # get RSS
     begin
       if not ( @rss = RSS::Parser.parse( @url ) )
         puts "caution: cannot parse RSS \"#{@url}\"\n"
@@ -98,7 +97,7 @@ class RSS_to_tweet
   # make text to tweet
   private
   def make_text( title, description, link )
-    # descriptionからHTMLタグを抜く
+    # sanitize HTML tags in description
     description = Sanitize.clean( description )
     text = "#{title}\n#{description}"
     if text.length > 115 
