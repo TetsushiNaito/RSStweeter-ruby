@@ -1,5 +1,5 @@
 #!/opt/rbenv/shims/ruby
-# ↑shebangは適宜パスを書き換えること
+# rewrite shebang to appropriate path
 
 require "time"
 require "rss"
@@ -7,7 +7,7 @@ require "json"
 require "sanitize"
 require "twitter"
 
-# RSS処理クラス
+# RSS processing class
 class RSS_to_tweet
   def initialize( url, timestamp )
     @url = url
@@ -23,8 +23,8 @@ class RSS_to_tweet
       @rss = RSS::Parser.parse( @url, false )
     end
  
-    # 最新のタイムスタンプを確認
-    # パースできなかった場合は現在の時刻を設定する
+    # confirm newest timestamp
+    # if failed to parse, set it to now
     begin
       @lasttime = Time.parse( @timestamp )
     rescue ArgumentError
@@ -38,9 +38,8 @@ class RSS_to_tweet
 
   def to_tweet
     tweet = []
-    # RSSの種類ごとに処理を変える
     case @rss.class.to_s
-    # RSS 1.0の場合
+    # in case of RSS 1.0
     when "RSS::RDF" then
       @rss.items.each do |item|
         if not item.dc_date then item.dc_date = Time.parse( '2001-01-01 00:00:00 JST' ) end
@@ -56,7 +55,7 @@ class RSS_to_tweet
       else
         @timestamp_now = @lasttime
       end
-    # RSS 0.9x/2.0の場合
+    # in case of RSS 0.9x/2.0
     when "RSS::Rss" then
       @rss.channel.items.each do |item|
         if not item.date then item.date = Time.parse( '2001-01-01 00:00:00 JST' ) end
@@ -72,7 +71,7 @@ class RSS_to_tweet
       else
         @timestamp_now = @lasttime
       end
-    # Atomの場合
+    # in case of Atom
     when "RSS::Atom::Feed" then
       @rss.entries.each do |item|
         if not item.updated.content then item.updated.content = Time.parse( '2001-01-01 00:00:00 JST' ) end
@@ -88,14 +87,14 @@ class RSS_to_tweet
       else
         @timestamp_now = @lasttime
       end
-    # 該当しない？
+    # unknown...?
     else
       puts "Unknown RSS Type \"#{@url}\"\n"
     end
     return tweet
   end
   
-  # ツイート内容を整形する
+  # make text to tweet
   private
   def make_text( title, description, link )
     # descriptionからHTMLタグを抜く
@@ -107,13 +106,12 @@ class RSS_to_tweet
     return "#{text}\n#{link}"
   end
   
-# クラス定義終わり
+# end of class
 end
 
-# RSS設定用JSONファイルを開く
-# このスクリプトと同じディレクトリに
-# 「rss_info.json」というファイル名で作っておくこと
-# JSONの形式
+# open a JSON file for RSS configuration
+# make it named as "rss_info.json" at same directory of this script
+# format of JSON is :
 # {
 #   "URL1":"TimeStamp1",
 #   "URL2":"TimeStamp2"
@@ -134,20 +132,20 @@ rescue JSON::ParserError
 end
 f.close
 
-# RSSのURLごとに処理
+# process by each URL of RSS
 t_array = []
 rsslist.keys.each do |url|
-  # RSS処理クラスのインスタンス生成
+  # make instance of RSS processing class
   rss = RSS_to_tweet.new( url, rsslist[url] )
 
-  # ツイートの配列をpushする
+  # push array of tweets
   t_array.push( rss.to_tweet )
 
-  # RSSの最新タイムスタンプを更新
+  # update newest timestamp of RSS
   rsslist[url] = rss.timestamp_now
 end
 
-# ツイート実行
+# do tweet
 client = Twitter::REST::Client.new do |config|
   config.consumer_key        = "your Consumer Key (API Key)"
   config.consumer_secret     = "your Consumer Secret (API Secret)"
@@ -161,10 +159,10 @@ t_array.each do |tweets|
   end
 end
 
-# JSONファイルを更新
+# update JSON file
 jsontxt = JSON.pretty_generate( rsslist )
 File.open( jsonfile, "w" ) do |f|
   f.write( jsontxt )
 end
 
-# おしまい。
+# the end.
