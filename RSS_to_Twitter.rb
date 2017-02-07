@@ -1,5 +1,6 @@
 #!/opt/rbenv/shims/ruby
 # rewrite shebang to appropriate path
+# test fot git
 
 require "time"
 require "rss"
