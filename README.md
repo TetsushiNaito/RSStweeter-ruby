@@ -7,10 +7,11 @@ If you have time to spare, please teach me how to write it more smartly.
 </p>
 ## How to use
 1. Change shebang (first line of the codes) appropriately with your environment.
-2. Edit RSS information file (rss_info.json).  
+2. Edit RSS information file named as "rss_info.json".    
 its JSON format is:  
     {  
       "URL1":"TimeStamp1",  
       "URL2":"TimeStamp2",  
       ......  
     }  
+This file must be at same directory of the script.
