@@ -8,12 +8,12 @@ If you have time to spare, please teach me how to write it more smartly.<br>
 ## How to use
 1. Change shebang (first line of the codes) appropriately with your environment.
 2. Edit RSS information file named as "rss_info.json".    
-its JSON format is: 
+its JSON format is:<br>
 <br>
     {  
       "URL1":"TimeStamp1",  
       "URL2":"TimeStamp2",  
       ......  
     }
-<br>
+<br><br>
 This file must be at same directory of the script.
